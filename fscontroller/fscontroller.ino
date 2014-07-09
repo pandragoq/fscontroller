@@ -119,8 +119,8 @@ void setup() {
 }
 
 void printData(String a, String b, String c, String d){
-	lcd.clear();
-	printText(0,0,a);
+  lcd.clear();
+  printText(0,0,a);
   printText(0,1,b);
   printText(0,2,c);
   printText(0,3,d);
@@ -131,46 +131,46 @@ void printText(int col, int line, String text){
 }
 
 void printAutopilot(){
-	String line1 = " HDG ";
-	line1 += hdg;
-	line1 += "  ALT ";
-	line1 += alt;
-	String line2 = " CRS ";
-	line2 += crs;
-	line2 += "  VSP ";
-	line2 += vsp;
-	String line3 = " IAS ";
-	line3 += ias;
-	line3 += "  MODE ";
-	line3 += apmode; 
+  String line1 = " HDG ";
+  line1 += hdg;
+  line1 += "  ALT ";
+  line1 += alt;
+  String line2 = " CRS ";
+  line2 += crs;
+  line2 += "  VSP ";
+  line2 += vsp;
+  String line3 = " IAS ";
+  line3 += ias;
+  line3 += "  MODE ";
+  line3 += apmode; 
     printData(line1, line2, line3, "");
     chooseItem(0);
 }
 
 String setRadioLine(String title, String active, String standby){
-	String aux = title;
-	aux += "  ";
-	aux += active;
-	aux += "/";
-	aux += standby;
-	return aux;
+  String aux = title;
+  aux += "  ";
+  aux += active;
+  aux += "/";
+  aux += standby;
+  return aux;
 }
 void printRadio(){
-	String line1 = setRadioLine("COM1",com1mhz,com1stb);
-	String line2 = setRadioLine("COM2",com2mhz,com2stb);
-	String line3 = setRadioLine("NAV1",nav1mhz,nav1stb);
-	String line4 = setRadioLine("NAV2",nav2mhz,nav2stb);
-	printData(line1, line2, line3, line4);
-	chooseItem(0);
+  String line1 = setRadioLine("COM1",com1mhz,com1stb);
+  String line2 = setRadioLine("COM2",com2mhz,com2stb);
+  String line3 = setRadioLine("NAV1",nav1mhz,nav1stb);
+  String line4 = setRadioLine("NAV2",nav2mhz,nav2stb);
+  printData(line1, line2, line3, line4);
+  chooseItem(0);
 }
  
 void printInfo(){
 
 }
 void printDebug(){
-	lcd.clear();
-	lcd.setCursor(0,0);
-	lcd.print(com1mhz);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(com1mhz);
 }
 
 void moveMenu(int direction) {
@@ -184,8 +184,8 @@ void moveMenu(int direction) {
         printRadio();
         break;
       case 2:
-      	printDebug();
-      	break;
+        printDebug();
+        break;
       default:
         // do something
         break;
@@ -193,40 +193,40 @@ void moveMenu(int direction) {
   /*printMenu();
   lcd.setCursor(position,0);
   lcd.print(char(126));
-  lcd.setCursor(0,2);						//Testing
-  lcd.print(String(position));				//Testing
-  lcd.setCursor(0,3);						//Testing
-  lcd.print(String(mainActiveCursor));*/	//Testing
+  lcd.setCursor(0,2);           //Testing
+  lcd.print(String(position));        //Testing
+  lcd.setCursor(0,3);           //Testing
+  lcd.print(String(mainActiveCursor));*/  //Testing
 }
 
 void chooseItem(int direction){
-	switch (mainActiveCursor) {
-	    case 0:
-	      lcd.setCursor(19,autopilotCursor); lcd.print(" ");
+  switch (mainActiveCursor) {
+      case 0:
+        lcd.setCursor(19,autopilotCursor); lcd.print(" ");
         autopilotCursor = (autopilotCursor + direction + 4) % 4;
         lcd.setCursor(19,autopilotCursor); lcd.print(char(127));
-	      break;
-	    case 1:
-	      lcd.setCursor(19,radioCursor); lcd.print(" ");
-	      radioCursor = (radioCursor + direction + 4) % 4;
-	      lcd.setCursor(19,abs(radioCursor)); lcd.print(char(127));
-	      break;
-	    case 2:
-	     
-	      break;
-	    default:
-	      // do something
-	      break;
-	}
+        break;
+      case 1:
+        lcd.setCursor(19,radioCursor); lcd.print(" ");
+        radioCursor = (radioCursor + direction + 4) % 4;
+        lcd.setCursor(19,abs(radioCursor)); lcd.print(char(127));
+        break;
+      case 2:
+       
+        break;
+      default:
+        // do something
+        break;
+  }
 
 }
 
 void firstRotary(int direction){
-	if (firstRotaryPressed == false){
-		moveMenu(direction);
-	} else {
-		chooseItem(direction);
-	}
+  if (firstRotaryPressed == false){
+    moveMenu(direction);
+  } else {
+    chooseItem(direction);
+  }
 }
 
 void sendRotaryControl(int direction, String pos, String neg, String push){
@@ -238,44 +238,44 @@ void sendRotaryControl(int direction, String pos, String neg, String push){
 }
 
 void secondRotary(int direction){
-	switch (mainActiveCursor) {
-	    case 0:
+  switch (mainActiveCursor) {
+      case 0:
         if (autopilotCursor == 0) { sendRotaryControl(direction,"A57","A58","B04"); }
         if (autopilotCursor == 1) { sendRotaryControl(direction,"A56","A55","B10"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"B15","B16","B26"); }
-	      break;
-	    case 1:
+        break;
+      case 1:
         if (autopilotCursor == 0) { sendRotaryControl(direction,"A02","A01","A06"); }
-	      if (autopilotCursor == 1) { sendRotaryControl(direction,"A08","A07","A12"); }
+        if (autopilotCursor == 1) { sendRotaryControl(direction,"A08","A07","A12"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"A14","A13","A18"); }
- 	      if (autopilotCursor == 3) { sendRotaryControl(direction,"A20","A19","A24"); }
-	      break;
-	    case 2:
-	      break;
-	    default:
-	      // do something
-	      break;
-	}
+        if (autopilotCursor == 3) { sendRotaryControl(direction,"A20","A19","A24"); }
+        break;
+      case 2:
+        break;
+      default:
+        // do something
+        break;
+  }
 }
 void thirdRotary(int direction){
-	switch (mainActiveCursor) {
-	    case 0:
+  switch (mainActiveCursor) {
+      case 0:
         if (autopilotCursor == 0) { sendRotaryControl(direction,"B11","B12","B05"); }
         if (autopilotCursor == 1) { sendRotaryControl(direction,"B13","B14","B04"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"","","A54"); }
-	      break;
-	    case 1:
+        break;
+      case 1:
         if (autopilotCursor == 0) { sendRotaryControl(direction,"A04","A03","A45"); }
         if (autopilotCursor == 1) { sendRotaryControl(direction,"A10","A09","A46"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"A16","A15","A18"); }
         if (autopilotCursor == 3) { sendRotaryControl(direction,"A22","A21","A24"); }
-	      break;
-	    case 2:
-	      break;
-	    default:
-	      // do something
-	      break;
-	}
+        break;
+      case 2:
+        break;
+      default:
+        // do something
+        break;
+  }
 }
 
 void readSerial(){
@@ -308,29 +308,29 @@ char getChar()// Get a character from the serial buffer
 }
 
 String getString(int chars){
-	String aux = "";
-	for(int i=0; i<chars; i++){
-		aux += getChar();
-	}
-	return aux;
+  String aux = "";
+  for(int i=0; i<chars; i++){
+    aux += getChar();
+  }
+  return aux;
 }
 
 void EQUALS(){
   String aux;
-	CodeIn = getChar();
-	switch (CodeIn) {
-	    case 'A':
-	      com1mhz = getString(6); if (mainActiveCursor == 1) { printText(6,0,com1mhz);}
-	      break;
-	    case 'B':
-	      com1stb = getString(6); if (mainActiveCursor == 1) { printText(13,0,com1stb);}
-	      break;
-	    case 'C':
-	      com2mhz = getString(6); if (mainActiveCursor == 1) { printText(6,1,com2mhz);}
-	      break;
-	    case 'D':
-	      com2stb = getString(6); if (mainActiveCursor == 1) { printText(13,1,com2stb);}
-	      break;
+  CodeIn = getChar();
+  switch (CodeIn) {
+      case 'A':
+        com1mhz = getString(6); if (mainActiveCursor == 1) { printText(6,0,com1mhz);}
+        break;
+      case 'B':
+        com1stb = getString(6); if (mainActiveCursor == 1) { printText(13,0,com1stb);}
+        break;
+      case 'C':
+        com2mhz = getString(6); if (mainActiveCursor == 1) { printText(6,1,com2mhz);}
+        break;
+      case 'D':
+        com2stb = getString(6); if (mainActiveCursor == 1) { printText(13,1,com2stb);}
+        break;
       case 'E':
         nav1mhz = getString(6); if (mainActiveCursor == 1) { printText(6,2,nav1mhz);}
         break;
@@ -362,10 +362,10 @@ void EQUALS(){
         aux = getString(1); if (aux == "0") { apmode = "NAV"; } else { apmode = "GPS"; }
         if (mainActiveCursor == 0) { printText(15,2,apmode); }
         break;
-	    default:
-	      // do something
-	      break;
-	}
+      default:
+        // do something
+        break;
+  }
 }
 
 void KEYS() 
