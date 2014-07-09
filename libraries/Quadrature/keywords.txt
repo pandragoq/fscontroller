@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For Quadrature
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+Quadrature	KEYWORD2
+minimum	KEYWORD2
+maximum	KEYWORD2
+nominimum	KEYWORD2
+nomaximum	KEYWORD2
+position	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
