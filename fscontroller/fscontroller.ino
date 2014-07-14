@@ -48,6 +48,10 @@ String ias;
 String crs;
 String vsp;
 String apmode;
+String apon;
+String aton;
+String buffhdg;
+String buffalt;
 
 //Radio variables
 int radioCursor;
@@ -94,6 +98,8 @@ void setup() {
  crs = "000";
  vsp = "+0000";
  apmode = "NAV";
+ apon = "OFF";
+ aton = "OFF";
 
  // Initialize radio variables
  radioCursor = 0;
@@ -106,8 +112,8 @@ void setup() {
  nav2mhz = "000.00";
  nav2stb = "000.00";
 
- //lcd.clear();
- //printAutopilot();
+ lcd.clear();
+ printAutopilot();
 
  for (int KoutPin = 8; KoutPin < 20; KoutPin++)// Get all the pins ready for "Keys"  
   {
@@ -142,8 +148,12 @@ void printAutopilot(){
   String line3 = " IAS ";
   line3 += ias;
   line3 += "  MODE ";
-  line3 += apmode; 
-    printData(line1, line2, line3, "");
+  line3 += apmode;
+  String line4 = " AP  ";
+  line4 += apon;
+  line4 += "  AT   ";
+  line4 += aton;
+    printData(line1, line2, line3, line4);
     chooseItem(0);
 }
 
@@ -230,11 +240,15 @@ void firstRotary(int direction){
 }
 
 void sendRotaryControl(int direction, String pos, String neg, String push){
+  if (push == "B04" and direction == 0) { buffhdg = hdg; }
+  if (push == "B05" and direction == 0) { buffalt = alt; }
   if (direction == 1 and pos != "") { Serial.println(pos); } else {
     if (direction == -1 and neg != "") { Serial.println(neg); } else {
       if (direction == 0 and push != "") { Serial.println(push); }
     }
   }
+  if (push == "B04" and direction == 0) { Serial.print("A59"); Serial.println(buffhdg); }
+  if (push == "B05" and direction == 0) { Serial.print("B32"); Serial.println(buffalt); }
 }
 
 void secondRotary(int direction){
@@ -243,12 +257,13 @@ void secondRotary(int direction){
         if (autopilotCursor == 0) { sendRotaryControl(direction,"A57","A58","B04"); }
         if (autopilotCursor == 1) { sendRotaryControl(direction,"A56","A55","B10"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"B15","B16","B26"); }
+        if (autopilotCursor == 3) { sendRotaryControl(direction,"","","B01"); }
         break;
       case 1:
-        if (autopilotCursor == 0) { sendRotaryControl(direction,"A02","A01","A06"); }
-        if (autopilotCursor == 1) { sendRotaryControl(direction,"A08","A07","A12"); }
-        if (autopilotCursor == 2) { sendRotaryControl(direction,"A14","A13","A18"); }
-        if (autopilotCursor == 3) { sendRotaryControl(direction,"A20","A19","A24"); }
+        if (radioCursor == 0) { sendRotaryControl(direction,"A02","A01","A06"); }
+        if (radioCursor == 1) { sendRotaryControl(direction,"A08","A07","A12"); }
+        if (radioCursor == 2) { sendRotaryControl(direction,"A14","A13","A18"); }
+        if (radioCursor == 3) { sendRotaryControl(direction,"A20","A19","A24"); }
         break;
       case 2:
         break;
@@ -263,12 +278,13 @@ void thirdRotary(int direction){
         if (autopilotCursor == 0) { sendRotaryControl(direction,"B11","B12","B05"); }
         if (autopilotCursor == 1) { sendRotaryControl(direction,"B13","B14","B04"); }
         if (autopilotCursor == 2) { sendRotaryControl(direction,"","","A54"); }
+        if (autopilotCursor == 3) { sendRotaryControl(direction,"","","B34"); }
         break;
       case 1:
-        if (autopilotCursor == 0) { sendRotaryControl(direction,"A04","A03","A45"); }
-        if (autopilotCursor == 1) { sendRotaryControl(direction,"A10","A09","A46"); }
-        if (autopilotCursor == 2) { sendRotaryControl(direction,"A16","A15","A18"); }
-        if (autopilotCursor == 3) { sendRotaryControl(direction,"A22","A21","A24"); }
+        if (radioCursor == 0) { sendRotaryControl(direction,"A04","A03","A45"); }
+        if (radioCursor == 1) { sendRotaryControl(direction,"A10","A09","A46"); }
+        if (radioCursor == 2) { sendRotaryControl(direction,"A16","A15","A18"); }
+        if (radioCursor == 3) { sendRotaryControl(direction,"A22","A21","A24"); }
         break;
       case 2:
         break;
@@ -343,6 +359,9 @@ void EQUALS(){
       case 'H':
         nav2stb = getString(6); if (mainActiveCursor == 1) { printText(13,3,nav2stb);}
         break;
+      case 'a':
+        aux = getString(1); if (aux == "0") { apon = "OFF"; } else { apon = " ON"; }
+        if (mainActiveCursor == 0) { printText(5,4,apon); }
       case 'b':
         alt = getString(5); if (mainActiveCursor == 0) { printText(14,0,alt); }
         break;
@@ -361,6 +380,10 @@ void EQUALS(){
       case 'l':
         aux = getString(1); if (aux == "0") { apmode = "NAV"; } else { apmode = "GPS"; }
         if (mainActiveCursor == 0) { printText(15,2,apmode); }
+        break;
+      case 't':
+        aux = getString(1); if (aux == "0") { aton = "OFF"; } else { aton = " ON"; }
+        if (mainActiveCursor == 0) { printText(15,3,aton); }
         break;
       default:
         // do something
