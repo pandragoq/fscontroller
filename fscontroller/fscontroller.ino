@@ -1,6 +1,7 @@
 // fscontroller.ino
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
+#include <Keypad.h>
 #include "math.h"
 #include "Quadrature.h"
 
@@ -36,12 +37,12 @@ int Rold3;// a third loop old reading
 int Rdif3; // the third test difference
 
 // Menu variables
-uint8_t mainActiveCursor; //Control which menu to activate
+byte mainActiveCursor; //Control which menu to activate
 boolean firstRotaryPressed;
 boolean gotData;
 
 //Autopilot variables
-int autopilotCursor;
+byte autopilotCursor;
 String hdg;
 String alt;
 String ias;
@@ -54,7 +55,7 @@ String buffhdg;
 String buffalt;
 
 //Radio variables
-int radioCursor;
+byte radioCursor;
 String com1mhz;
 String com1stb;
 String com2mhz;
@@ -68,10 +69,25 @@ String KoldpinStateSTR, KpinStateSTR, Kstringnewstate,Kstringoldstate;
 
 LiquidCrystal_I2C lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, POSITIVE);
 
+//Keypad stuff
+const byte numRows = 4;
+const byte numCols = 4;
+
+char keymap[numRows][numCols]=
+{ {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}};
+
+byte rowPins[numRows] = {A4,A3,A2,A1};
+byte colPins[numCols] = {A0,13,12,11};
+
+Keypad myKeypad= Keypad(makeKeymap(keymap), rowPins, colPins, numRows, numCols);
+
 void setup() {
  //Switch the backlight on (this doesn't work....)
- pinMode ( BACKLIGHT_PIN, OUTPUT );
- digitalWrite ( BACKLIGHT_PIN, HIGH );
+ //pinMode ( BACKLIGHT_PIN, OUTPUT );
+ //digitalWrite ( BACKLIGHT_PIN, HIGH );
  
  lcd.begin(20,4);
  lcd.clear();
@@ -137,7 +153,7 @@ void printText(int col, int line, String text){
 }
 
 void printAutopilot(){
-  String line1 = " HDG ";
+/*  String line1 = " HDG ";
   line1 += hdg;
   line1 += "  ALT ";
   line1 += alt;
@@ -152,9 +168,21 @@ void printAutopilot(){
   String line4 = " AP  ";
   line4 += apon;
   line4 += "  AT   ";
-  line4 += aton;
-    printData(line1, line2, line3, line4);
+  line4 += aton; */
+  String line1 = setAPLine(" HDG ", hdg, "  ALT ",alt);
+  String line2 = setAPLine(" CRS ", crs, "  VSP ",vsp);
+  String line3 = setAPLine(" IAS ", ias, "  MODE ",apmode);
+  String line4 = setAPLine(" AP  ", apon, "  AT   ", aton);
+  printData(line1, line2, line3, line4);
     chooseItem(0);
+}
+
+String setAPLine(String a, String b, String c, String d){
+  String aux = a;
+  aux += b;
+  aux += c;
+  aux += d;
+  return aux;
 }
 
 String setRadioLine(String title, String active, String standby){
@@ -310,11 +338,20 @@ void readSerial(){
   }
 }
 
+void readKeypad(){
+  char keypressed = myKeypad.getKey();
+  if (keypressed != NO_KEY){
+    lcd.setCursor(0,0);
+    lcd.print(keypressed);
+  }
+}
+
 
 void loop() {
   {KEYS();}
   {ENCODER();}
   {readSerial();}
+  {readKeypad();}
 }
 
 char getChar()// Get a character from the serial buffer
