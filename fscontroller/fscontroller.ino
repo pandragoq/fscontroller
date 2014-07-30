@@ -21,6 +21,8 @@ Quadrature quad3(7, 6);
 
 #define WINDOWS       3
 
+#define DEBUG         0
+
 int CodeIn;// used on all serial reads
 int KpinNo; 
 int Koutpin;
@@ -64,6 +66,12 @@ String nav1mhz;
 String nav1stb;
 String nav2mhz;
 String nav2stb;
+
+//Navigation variables
+byte navCursor;
+String squawk;
+String dme1;
+String dme2;
 
 String KoldpinStateSTR, KpinStateSTR, Kstringnewstate,Kstringoldstate;
 
@@ -129,7 +137,8 @@ void setup() {
  nav2stb = "000.00";
 
  lcd.clear();
- printAutopilot();
+ //printAutopilot();
+ printDebug();
 
  for (int KoutPin = 8; KoutPin < 20; KoutPin++)// Get all the pins ready for "Keys"  
   {
@@ -201,6 +210,10 @@ void printRadio(){
   printData(line1, line2, line3, line4);
   chooseItem(0);
 }
+
+void printNav(){
+ // String line1 = 
+}
  
 void printInfo(){
 
@@ -208,7 +221,6 @@ void printInfo(){
 void printDebug(){
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print(com1mhz);
 }
 
 void moveMenu(int direction) {
@@ -323,17 +335,25 @@ void thirdRotary(int direction){
 }
 
 void readSerial(){
-  if (Serial.available()) {// Check if serial data has arrived from PC
-    CodeIn = getChar();
-    if (CodeIn == '=') {EQUALS();} // The first identifier is "="
-   // if (CodeIn == '<') {LESSTHAN();}// The first identifier is "<"
-   // if (CodeIn == '?') {QUESTION();}// The first identifier is "?"
-   // if (CodeIn == '/') {SLASH();}// The first identifier is "/" (Annunciators)
-    gotData == true;
+  if (DEBUG == 1){
+    if(Serial.available()){
+      lcd.print(getChar());
+    } else {
+     // lcd.print("!");
+    }
   } else {
-    if (gotData == true) {
-      moveMenu(0);
-      gotData = false;
+    if (Serial.available()) {// Check if serial data has arrived from PC
+      CodeIn = getChar();
+      if (CodeIn == '=') {EQUALS();} // The first identifier is "="
+     // if (CodeIn == '<') {LESSTHAN();}// The first identifier is "<"
+     // if (CodeIn == '?') {QUESTION();}// The first identifier is "?"
+     // if (CodeIn == '/') {SLASH();}// The first identifier is "/" (Annunciators)
+      gotData == true;
+    /*} else {
+      if (gotData == true) {
+        moveMenu(0);
+        gotData = false;
+      }*/
     }
   }
 }
@@ -399,6 +419,7 @@ void EQUALS(){
       case 'a':
         aux = getString(1); if (aux == "0") { apon = "OFF"; } else { apon = " ON"; }
         if (mainActiveCursor == 0) { printText(5,4,apon); }
+        break;
       case 'b':
         alt = getString(5); if (mainActiveCursor == 0) { printText(14,0,alt); }
         break;
@@ -437,10 +458,10 @@ void KEYS()
     if (KpinStateSTR != KoldpinStateSTR)
     {
       if (KpinNo != 13){
-      Serial.print ("D"); 
-      if (KpinNo < 10) Serial.print ("0");
-      Serial.print (KpinNo);
-      Serial.println (KpinStateSTR);
+      //Serial.print ("D"); 
+      //if (KpinNo < 10) Serial.print ("0");
+      //Serial.print (KpinNo);
+      //Serial.println (KpinStateSTR);
       }
       switch (KpinNo) {
           case 8:
